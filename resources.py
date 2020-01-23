@@ -349,7 +349,7 @@ class GetPayUrl(Resource):
                     'url': 'https://www.zarinpal.com/pg/StartPay/' + result.Authority}
         else:
             return {'status': 500,
-                    'error': 'Zarinpal not responding'}
+                    'error': 'Zarinpal is not responding'}
 
 
 class SendMessage(Resource):  # TODO: add exercise field to db
