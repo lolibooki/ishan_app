@@ -450,7 +450,9 @@ class CourseDetail(Resource):
         data = parser_copy.parse_args()
 
         try:
-            if models.ip_courses(_id=data['_id']):
+            if models.rec_courses(_id=data['_id']):
+                return models.rec_courses(_id=data['_id'])
+            elif models.ip_courses(_id=data['_id']):
                 return models.ip_courses(_id=data['_id'])
             elif models.live_courses(_id=data['_id']):
                 return models.live_courses(_id=data['_id'])
