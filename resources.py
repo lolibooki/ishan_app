@@ -89,8 +89,7 @@ class UserRegistration(Resource):
                     'message': 'Something went wrong'}
 
 
-<<<<<<< HEAD
-=======
+
 class EditUser(Resource):
     @jwt_required
     def post(self):
@@ -126,7 +125,6 @@ class EditUser(Resource):
                     'message': 'internal error'}
 
 
->>>>>>> 3f92064ab4d30f2a6dbf75951b6e5c207d10f598
 # TODO: error handling the incorrect user name
 class UserLogin(Resource):
     def post(self):
@@ -438,8 +436,6 @@ class GetMessages(Resource):
                 item['reply'] = str(item['reply'])
             json_message.append(item)
         return json_message
-<<<<<<< HEAD
-=======
 
 
 class CourseDetail(Resource):
@@ -462,4 +458,3 @@ class CourseDetail(Resource):
         except Exception as e:
             return {'status': 400,
                     'message': 'id not included'}
->>>>>>> 3f92064ab4d30f2a6dbf75951b6e5c207d10f598
