@@ -3,3 +3,4 @@ front/
 .idea/
 static/
 __pycache__/
+front/health/
