@@ -103,6 +103,8 @@ api.add_resource(resources.GetUserRecCourses, '/userRecCourse')
 api.add_resource(resources.GetPayUrl, '/pay/getUrl')
 api.add_resource(resources.SendMessage, '/mail/send')
 api.add_resource(resources.GetMessages, '/mail/get')
+api.add_resource(resources.CourseDetail, '/getCourseDetail')
+api.add_resource(resources.EditUser, '/editUser')
 api.add_resource(resources.Test, '/test')
 
 
