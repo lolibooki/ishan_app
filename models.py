@@ -12,6 +12,15 @@ def find_user(key):
     return mongo.db.users.find_one(key)
 
 
+<<<<<<< HEAD
+=======
+def update_user(user, data):
+    if mongo.db.users.update(user, {"$set":data}):
+        return True
+    return False
+
+
+>>>>>>> 3f92064ab4d30f2a6dbf75951b6e5c207d10f598
 def live_classes():
     lives = [item for item in mongo.db.lives.find()]  # return list of live classes
     for it in lives:

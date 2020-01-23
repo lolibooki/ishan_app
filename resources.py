@@ -89,6 +89,44 @@ class UserRegistration(Resource):
                     'message': 'Something went wrong'}
 
 
+<<<<<<< HEAD
+=======
+class EditUser(Resource):
+    @jwt_required
+    def post(self):
+        parser_copy = parser.copy()
+        # optional
+        parser_copy.add_argument('fname', required=False)
+        parser_copy.add_argument('lname', required=False)
+        # parser_copy.add_argument('mphone', required=False)
+        parser_copy.add_argument('email', required=False)
+        parser_copy.add_argument('mcode', required=False)
+        # parser_copy.add_argument('pass', required=False)
+        parser_copy.add_argument('phone', required=False)
+        parser_copy.add_argument('state', required=False)
+        parser_copy.add_argument('city', required=False)
+        parser_copy.add_argument('address', required=False)
+
+        data = parser_copy.parse_args()
+
+        current_user = models.find_user({"mphone": data['mphone']})
+
+        updated_user = dict()
+        for item in data:
+            if not data[item]:
+                continue
+            else:
+                updated_user[item] = data[item]
+
+        if models.update_user({"_id": current_user["_id"]}, updated_user):
+            return {'status': 200,
+                    'message': 'successfully updated'}
+        else:
+            return {'status': 500,
+                    'message': 'internal error'}
+
+
+>>>>>>> 3f92064ab4d30f2a6dbf75951b6e5c207d10f598
 # TODO: error handling the incorrect user name
 class UserLogin(Resource):
     def post(self):
@@ -400,3 +438,26 @@ class GetMessages(Resource):
                 item['reply'] = str(item['reply'])
             json_message.append(item)
         return json_message
+<<<<<<< HEAD
+=======
+
+
+class CourseDetail(Resource):
+    def post(self):
+        parser_copy = parser.copy()
+        parser_copy.add_argument('_id', help='This field cannot be blank', required=True)
+
+        data = parser_copy.parse_args()
+
+        try:
+            if models.ip_courses(_id=data['_id']):
+                return models.ip_courses(_id=data['_id'])
+            elif models.live_courses(_id=data['_id']):
+                return models.live_courses(_id=data['_id'])
+            else:
+                return {'status': 400,
+                        'message': 'id is incorrect'}
+        except Exception as e:
+            return {'status': 400,
+                    'message': 'id not included'}
+>>>>>>> 3f92064ab4d30f2a6dbf75951b6e5c207d10f598
