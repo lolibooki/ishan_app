@@ -7,8 +7,11 @@ from flask_cors import CORS
 from bson.objectid import ObjectId
 from suds.client import Client
 import datetime
+<<<<<<< HEAD
+=======
 from flask_admin import Admin
 import dbforms
+>>>>>>> 3f92064ab4d30f2a6dbf75951b6e5c207d10f598
 
 MMERCHANT_ID = 'aca6038e-06a7-11e9-bcad-005056a205be'
 ZARINPAL_WEBSERVICE = 'https://zarinpal.com/pg/services/WebGate/wsdl'
@@ -17,8 +20,13 @@ app = Flask(__name__)
 api = Api(app)
 
 app.config["MONGO_URI"] = "mongodb://localhost:27017/students"
+<<<<<<< HEAD
+app.config['SECRET_KEY'] = 'some-secret-string'
+app.config['JWT_SECRET_KEY'] = 'jwt-secret-string'
+=======
 app.config['SECRET_KEY'] = 'feb7a837-6c72-4ec2-ac2d-7225ee89b1be'
 app.config['JWT_SECRET_KEY'] = '95279529-a66a-4312-a240-2312264db599'
+>>>>>>> 3f92064ab4d30f2a6dbf75951b6e5c207d10f598
 app.config['JWT_BLACKLIST_ENABLED'] = True
 app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
 
@@ -103,12 +111,18 @@ api.add_resource(resources.GetUserRecCourses, '/userRecCourse')
 api.add_resource(resources.GetPayUrl, '/pay/getUrl')
 api.add_resource(resources.SendMessage, '/mail/send')
 api.add_resource(resources.GetMessages, '/mail/get')
+<<<<<<< HEAD
+=======
 api.add_resource(resources.CourseDetail, '/getCourseDetail')
 api.add_resource(resources.EditUser, '/editUser')
+>>>>>>> 3f92064ab4d30f2a6dbf75951b6e5c207d10f598
 api.add_resource(resources.Test, '/test')
 
 
 if __name__ == "__main__":
+<<<<<<< HEAD
+=======
     admin = Admin(app)
     admin.add_view(dbforms.UserView(mongo.db.users, 'User'))
+>>>>>>> 3f92064ab4d30f2a6dbf75951b6e5c207d10f598
     app.run(debug=True)
