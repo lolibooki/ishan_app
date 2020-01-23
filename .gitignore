@@ -1,0 +1,5 @@
+logs/
+front/
+.idea/
+static/
+__pycache__/
