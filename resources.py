@@ -226,7 +226,8 @@ class GetLiveCourses(Resource):
 
 class GetInPersonCourses(Resource):
     def get(self):
-        logging.info('get in person courses request. ip: {}'.format(reqparse.request.remote_addr))
+        logging.info('get in person courses request. ip: {}'.format(reqparse.request.headers.getlist(
+            "X-Forwarded-For")[0]))
         return models.ip_courses()
 
 
@@ -458,3 +459,9 @@ class CourseDetail(Resource):
         except Exception as e:
             return {'status': 400,
                     'message': 'id not included'}
+
+
+class Fields(Resource):
+    def get(self):
+        logging.info('get fields request. ip: {}'.format(reqparse.request.remote_addr))
+        return models.ip_courses()
