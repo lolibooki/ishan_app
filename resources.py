@@ -468,10 +468,9 @@ class Fields(Resource):
         parser_copy.add_argument('_id', help='This field cannot be blank', required=True)
 
         data = parser_copy.parse_args()
-        if data['_id'] == '':
-            data['_id'] = None
+        _id = data.get('_id', None)
 
-        fields = models.fields(_id=data['_id'])
+        fields = models.fields(_id=_id)
         for item in fields:
             duration = 0
             for _item in item['clist']:
