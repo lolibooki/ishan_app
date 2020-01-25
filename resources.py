@@ -465,7 +465,7 @@ class CourseDetail(Resource):
 class Fields(Resource):
     def post(self):
         parser_copy = parser.copy()
-        parser_copy.add_argument('_id', help='This field cannot be blank', required=True)
+        parser_copy.add_argument('_id', required=False)
 
         data = parser_copy.parse_args()
         _id = data.get('_id', None)
