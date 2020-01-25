@@ -476,7 +476,7 @@ class Fields(Resource):
         for item in fields:
             duration = 0
             for _item in item['clist']:
-                if _item['course']:
+                if _item['course'] is not None:
                     course_duration = len(models.rec_courses(_id=_item['course'])['weeks'])
                 duration += course_duration
             item['duration'] = duration
