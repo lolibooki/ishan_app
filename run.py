@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request, render_template
 from flask_restful import Api
+from werkzeug.contrib.fixers import ProxyFix
 # from flask_sqlalchemy import SQLAlchemy
 from flask_pymongo import PyMongo
 from flask_jwt_extended import JWTManager
@@ -111,6 +112,7 @@ api.add_resource(resources.Test, '/test')
 
 
 if __name__ == "__main__":
+    app.wsgi_app = ProxyFix(app.wsgi_app)
     admin = Admin(app)
     admin.add_view(dbforms.UserView(mongo.db.users, 'User'))
     app.run(debug=True)
