@@ -214,7 +214,7 @@ class GetLiveClasses(Resource):
 
 class GetRecordedCourses(Resource):
     def get(self):
-        logging.info('get recorded courses request. ip: {}'.format(reqparse.request.remote_addr))
+        logging.info('get recorded courses request. ip: {}'.format(reqparse.request.headers.getlist("X-Real-IP")))
         return models.rec_courses()
 
 
