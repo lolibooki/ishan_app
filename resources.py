@@ -482,3 +482,17 @@ class Fields(Resource):
 
         logging.info('get fields request. ip: {}'.format(reqparse.request.headers.getlist("X-Real-IP")))
         return fields
+
+
+class Teacher(Resource):
+    def post(self):
+        parser_copy = parser.copy()
+        parser_copy.add_argument('_id', required=False)
+
+        try:
+            data = parser_copy.parse_args()
+            _id = data.get('_id', None)
+        except:
+            _id = None
+
+        return models.get_teachers(_id=_id)

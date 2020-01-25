@@ -155,6 +155,17 @@ def fields(_id=None):
     return _fields
 
 
+def get_teachers(_id=None):
+    if _id:
+        teacher = mongo.db.teachers.find_one({"_id": ObjectId(_id)})
+        teacher["_id"] = str(teacher["_id"])
+        return teacher
+    teachers = [item for item in mongo.db.teachers.find()]
+    for teach in teachers:
+        teach["_id"] = str(teach["_id"])
+    return teachers
+
+
 class RevokedToken:
     def __init__(self, jti):
         self.query = {'jti': jti}
