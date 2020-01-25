@@ -480,5 +480,4 @@ class Fields(Resource):
             item['duration'] = duration
 
         logging.info('get fields request. ip: {}'.format(reqparse.request.headers.getlist("X-Real-IP")))
-        print(fields)
         return fields
