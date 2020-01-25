@@ -89,7 +89,6 @@ class UserRegistration(Resource):
                     'message': 'Something went wrong'}
 
 
-
 class EditUser(Resource):
     @jwt_required
     def post(self):
@@ -467,8 +466,11 @@ class Fields(Resource):
         parser_copy = parser.copy()
         parser_copy.add_argument('_id', required=False)
 
-        data = parser_copy.parse_args()
-        _id = data.get('_id', None)
+        try:
+            data = parser_copy.parse_args()
+            _id = data.get('_id', None)
+        except:
+            _id = None
 
         fields = models.fields(_id=_id)
         for item in fields:
