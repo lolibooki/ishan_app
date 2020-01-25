@@ -478,7 +478,7 @@ class Fields(Resource):
             for _item in item['clist']:
                 if _item['course'] is not None:
                     course_duration = len(models.rec_courses(_id=_item['course'])['weeks'])
-                duration += course_duration
+                    duration += course_duration
             item['duration'] = duration
 
         logging.info('get fields request. ip: {}'.format(reqparse.request.headers.getlist("X-Real-IP")))
