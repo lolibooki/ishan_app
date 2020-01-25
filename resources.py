@@ -160,7 +160,7 @@ class UserLogin(Resource):
                                                                            'address']}
             }
         else:
-            logging.warning('unsuccessful login attempt. ip: {}'.format(reqparse.request.remote_addr))
+            logging.warning('unsuccessful login attempt. ip: {}'.format(reqparse.request.headers.getlist("X-Real-IP")))
             return {'status': 400,
                     'message': 'Wrong credentials'}
 
@@ -201,14 +201,16 @@ class TokenRefresh(Resource):
         current_user = get_jwt_identity()
         access_token = create_access_token(identity=current_user,
                                            expires_delta=ACCESS_TOKEN_EXPIRE)
-        logging.info('request for refreshing token. user: {} ip: {}'.format(current_user, reqparse.request.remote_addr))
+        logging.info('request for refreshing token. user: {} ip: {}'.format(current_user,
+                                                                            reqparse.request.headers.getlist(
+                                                                                "X-Real-IP")))
         return {'status': 200,
                 'access_token': access_token}
 
 
 class GetLiveClasses(Resource):
     def get(self):
-        logging.info('get live class request. ip: {}'.format(reqparse.request.remote_addr))
+        logging.info('get live class request. ip: {}'.format(reqparse.request.headers.getlist("X-Real-IP")))
         return models.live_classes()
 
 
@@ -220,13 +222,13 @@ class GetRecordedCourses(Resource):
 
 class GetLiveCourses(Resource):
     def get(self):
-        logging.info('get live courses request. ip: {}'.format(reqparse.request.remote_addr))
+        logging.info('get live courses request. ip: {}'.format(reqparse.request.headers.getlist("X-Real-IP")))
         return models.live_courses()
 
 
 class GetInPersonCourses(Resource):
     def get(self):
-        logging.info('get in person courses request. ip: {}'.format(reqparse.request.remote_addr))
+        logging.info('get in person courses request. ip: {}'.format(reqparse.request.headers.getlist("X-Real-IP")))
         return models.ip_courses()
 
 
@@ -234,7 +236,7 @@ class Test(Resource):
     @jwt_required
     def post(self):
         current_user = get_jwt_identity()
-        logging.info('TEST check. ip: {}'.format(reqparse.request.remote_addr))
+        logging.info('TEST check. ip: {}'.format(reqparse.request.headers.getlist("X-Real-IP")))
         return current_user
 
 
@@ -462,5 +464,5 @@ class CourseDetail(Resource):
 
 class Fields(Resource):
     def get(self):
-        logging.info('get fields request. ip: {}'.format(reqparse.request.remote_addr))
+        logging.info('get fields request. ip: {}'.format(reqparse.request.headers.getlist("X-Real-IP")))
         return models.ip_courses()
