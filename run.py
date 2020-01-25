@@ -108,6 +108,7 @@ api.add_resource(resources.SendMessage, '/mail/send')
 api.add_resource(resources.GetMessages, '/mail/get')
 api.add_resource(resources.CourseDetail, '/getCourseDetail')
 api.add_resource(resources.EditUser, '/editUser')
+api.add_resource(resources.Fields, '/field')
 api.add_resource(resources.Test, '/test')
 
 

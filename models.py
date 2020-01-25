@@ -144,6 +144,17 @@ def get_message(method, user):
         return mongo.db.messages.find({"receiver": user})
 
 
+def fields(_id=None):
+    if _id:
+        _fields = [fi for fi in mongo.db.fields.find({'_id': _id})]
+    _fields = [fi for fi in mongo.db.fields.find()]
+    for item in _fields:
+        item["_id"] = str(item["_id"])
+        for _item in item['clist']:
+            _item['course'] = str(_item['course'])
+    return _fields
+
+
 class RevokedToken:
     def __init__(self, jti):
         self.query = {'jti': jti}

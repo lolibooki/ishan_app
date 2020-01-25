@@ -463,6 +463,22 @@ class CourseDetail(Resource):
 
 
 class Fields(Resource):
-    def get(self):
+    def post(self):
+        parser_copy = parser.copy()
+        parser_copy.add_argument('_id', help='This field cannot be blank', required=True)
+
+        data = parser_copy.parse_args()
+        if data['_id'] == '':
+            data['_id'] = None
+
+        fields = models.fields(_id=data['_id'])
+        for item in fields:
+            duration = 0
+            for _item in item['clist']:
+                course_duration = len(models.rec_courses(_id=_item['course'])['weeks'])
+                duration += course_duration
+            item['duration'] = duration
+
         logging.info('get fields request. ip: {}'.format(reqparse.request.headers.getlist("X-Real-IP")))
-        return models.ip_courses()
+        print(fields)
+        return fields
