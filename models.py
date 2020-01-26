@@ -146,7 +146,7 @@ def get_message(method, user):
 
 def fields(_id=None):
     if _id:
-        _fields = [fi for fi in mongo.db.fields.find({'_id': _id})]
+        _fields = [fi for fi in mongo.db.fields.find({'_id': ObjectId(_id)})]
     _fields = [fi for fi in mongo.db.fields.find()]
     for item in _fields:
         item["_id"] = str(item["_id"])
