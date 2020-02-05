@@ -152,7 +152,13 @@ def fields(_id=None):
     for item in _fields:
         item["_id"] = str(item["_id"])
         for _item in item['clist']:
-            _item['course'] = str(_item['course'])
+            if isinstance(_item['course'], list):
+                courses = list()
+                for course in _item['course']:
+                    courses.append(str(course))
+                _item['course'] = courses
+            else:
+                _item['course'] = str(_item['course'])
     return _fields
 
 

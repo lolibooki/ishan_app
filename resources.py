@@ -53,7 +53,8 @@ class UserRegistration(Resource):
 
         data = parser_copy.parse_args()
 
-        if models.find_user({"mphone": data['mphone']}):  # check if user is new or not
+        # check if user is new or not
+        if models.find_user({"mphone": data['mphone']}):
             logging.warning('request for registering user that exists. user: {}'.format(data['mphone']))
             return {'status': 400,
                     'message': 'User {} already exists'. format(data['mphone'])}
@@ -107,7 +108,7 @@ class EditUser(Resource):
 
         data = parser_copy.parse_args()
 
-        current_user = models.find_user({"mphone": data['mphone']})
+        current_user = models.find_user({"mphone": get_jwt_identity()})
 
         updated_user = dict()
         for item in data:
@@ -138,8 +139,7 @@ class UserLogin(Resource):
 
         current_user = models.find_user({"mphone": data['mphone']})
         if sha256.verify(data['pass'], current_user['pass']):
-            access_token = create_access_token(identity=data['mphone'],
-                                               expires_delta=ACCESS_TOKEN_EXPIRE)
+            access_token = create_access_token(identity=data['mphone'], expires_delta=ACCESS_TOKEN_EXPIRE)
             refresh_token = create_refresh_token(identity=data['mphone'])
             current_user["_id"] = str(current_user['_id'])
             logging.info('user logged in. user: {}'.format(data['mphone']))
@@ -198,8 +198,7 @@ class TokenRefresh(Resource):
     @jwt_refresh_token_required
     def post(self):
         current_user = get_jwt_identity()
-        access_token = create_access_token(identity=current_user,
-                                           expires_delta=ACCESS_TOKEN_EXPIRE)
+        access_token = create_access_token(identity=current_user, expires_delta=ACCESS_TOKEN_EXPIRE)
         logging.info('request for refreshing token. user: {} ip: {}'.format(current_user,
                                                                             reqparse.request.headers.getlist(
                                                                                 "X-Real-IP")))
@@ -275,7 +274,8 @@ class GetUserRecCourses(Resource):
         user = models.find_user({'mphone': current_user})
         rec_course_ids = [ObjectId(_id) for _id in user['reccourse'].keys()]
         current_date = datetime.datetime.now()
-        current_time = datetime.date(current_date.year, current_date.month, current_date.day).isocalendar()
+        current_time = datetime.date(
+            current_date.year, current_date.month, current_date.day).isocalendar()
         courses = list()
         for item in rec_course_ids:
             current_course = models.get_user_rec_course(item)
@@ -304,11 +304,23 @@ class GetPayUrl(Resource):
         parser_copy.add_argument('method', help='This field cannot be blank', required=True)  # 1:full/3:installment
         data = parser_copy.parse_args()
 
+        current_user = get_jwt_identity()
+        user = models.find_user({'mphone': current_user})
+
         if data['ctype'] == "ip":
+            if ObjectId(data["_id"]) in user["ipcourse"]:
+                return {'status': 405,
+                        'message': 'this course is currently purchased'}
             courses = models.ip_courses(_id=data['_id'])
         elif data['ctype'] == "rec":
+            if ObjectId(data["_id"]) in user["reccourse"].keys():
+                return {'status': 405,
+                        'message': 'this course is currently purchased'}
             courses = models.rec_courses(_id=data['_id'])
         elif data['ctype'] == "liv":
+            if ObjectId(data["_id"]) in user["reccourse"].keys():
+                return {'status': 405,
+                        'message': 'this course is currently purchased'}
             courses = models.live_courses(_id=data['_id'])
         else:
             return {'status': 400,
@@ -327,9 +339,6 @@ class GetPayUrl(Resource):
         except KeyError as e:
             return {'status': 404,
                     'message': e}
-
-        current_user = get_jwt_identity()
-        user = models.find_user({'mphone': current_user})
 
         callback_url = SERVER_IP + '/PayCallback/{}/{}/{}/{}/{}'.format(data['method'],
                                                                         str(user['_id']),
@@ -363,8 +372,10 @@ class SendMessage(Resource):  # TODO: add exercise field to db
         parser_copy.add_argument('to', help='This field cannot be blank', required=True)
         parser_copy.add_argument('title', help='This field cannot be blank', required=True)
         parser_copy.add_argument('body', help='This field cannot be blank', required=True)
-        parser_copy.add_argument('reply', required=False)  # id of replied message
-        parser_copy.add_argument('exc', required=False)  # boolean to check if its a exercise or not
+        # id of replied message
+        parser_copy.add_argument('reply', required=False)
+        # boolean to check if its a exercise or not
+        parser_copy.add_argument('exc', required=False)
 
         data = parser_copy.parse_args()
 
@@ -400,7 +411,8 @@ class SendMessage(Resource):  # TODO: add exercise field to db
             message['attach'] = os.path.join(UPLOAD_FOLDER, file_name)
             message_id = models.send_message(message)
             if data['exc']:
-                models.user_rec_exc_update(user['_id'], data['receiver'], message_id)
+                models.user_rec_exc_update(
+                    user['_id'], data['receiver'], message_id)
             return {'status': 200,
                     'message': 'email sent'}
         return {'status': 500,
@@ -413,7 +425,8 @@ class GetMessages(Resource):
     def post(self):
         parser_copy = parser.copy()
         parser_copy.add_argument('method', help='This field cannot be blank', required=True)  # sent or get
-        parser_copy.add_argument('admin', required=False)  # boolean: if request for admin or not
+        # boolean: if request for admin or not
+        parser_copy.add_argument('admin', required=False)
 
         data = parser_copy.parse_args()
 
@@ -442,7 +455,8 @@ class GetMessages(Resource):
 class CourseDetail(Resource):
     def post(self):
         parser_copy = parser.copy()
-        parser_copy.add_argument('_id', help='This field cannot be blank', required=True)
+        parser_copy.add_argument(
+            '_id', help='This field cannot be blank', required=True)
 
         data = parser_copy.parse_args()
 
@@ -476,9 +490,21 @@ class Fields(Resource):
         for item in fields:
             duration = 0
             for _item in item['clist']:
+                # course_duration = 0
                 if _item['course'] is not None:
-                    course_duration = len(models.rec_courses(_id=_item['course'])['weeks'])
-                    _item['course'] = models.rec_courses(_id=_item['course'])
+                    if isinstance(_item['course'], list):
+                        subdur = 0
+                        course_list = list()
+                        for course in _item['course']:
+                            dur = len(models.rec_courses(_id=course)['weeks'])
+                            course_list.append(models.rec_courses(_id=course))
+                            if dur > subdur:
+                                subdur = dur
+                        course_duration = subdur
+                        _item['course'] = course_list
+                    else:
+                        course_duration = len(models.rec_courses(_id=_item['course'])['weeks'])
+                        _item['course'] = models.rec_courses(_id=_item['course'])
                     duration += course_duration
             item['duration'] = duration
 
