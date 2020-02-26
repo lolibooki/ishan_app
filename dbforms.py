@@ -1,5 +1,6 @@
-from wtforms import form, fields, validators
+from wtforms import form, fields, validators, widgets
 from flask_admin.contrib.pymongo import ModelView
+from passlib.hash import pbkdf2_sha256 as sha256
 import models
 
 
@@ -14,7 +15,7 @@ class UserForm(form.Form):
     city = fields.StringField("city")
     address = fields.StringField("address")
     password = fields.PasswordField("pass")
-    reccourse = fields.StringField('reccourse')
+    reccourse = fields.SelectField('reccourse', widget=widgets.Select())
 
 
 class UserView(ModelView):
@@ -27,17 +28,32 @@ class UserView(ModelView):
 
     def get_list(self, *args, **kwargs):
         count, data = super(UserView, self).get_list(*args, **kwargs)
+        print('get_list')
         course_list = list()
         for item in data:
             if item.get('reccourse'):
                 item['reccourse'] = [models.rec_courses(_id=course)['title'] for course in item["reccourse"].keys()]
         return count, data
 
-    def _get_course_list(self, form):
-        courses = [item['title'] for item in models.rec_courses()]
-        form.reccourse.choices = courses
-        return form
+    def _get_course_list(self, _form):
+        print('_get_course_list')
+        courses = [(item['_id'], item['title']) for item in models.rec_courses()]
+        _form.reccourse.choices = courses
+        return _form
 
-    def create_model(self, _form):
+    def create_form(self):
+        print('create_form')
         _form = super(UserView, self).create_form()
         return self._get_course_list(_form)
+
+    def edit_form(self, obj):
+        print('edit_form')
+        _form = super(UserView, self).edit_form(obj)
+        return self._get_course_list(_form)
+
+    def on_model_change(self, _form, model, is_created):
+        password = model.get('password')
+        model['password'] = sha256.hash(password)
+        reccourse = model.get('reccourse')
+        print(reccourse)
+        return model

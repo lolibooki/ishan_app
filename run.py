@@ -29,6 +29,9 @@ jwt = JWTManager(app)
 mongo = PyMongo(app)
 CORS(app)
 
+admin = Admin(app)
+admin.add_view(dbforms.UserView(mongo.db.users, 'User'))
+
 
 @jwt.expired_token_loader
 def my_expired_token_callback(expired_token):
@@ -115,6 +118,4 @@ api.add_resource(resources.Test, '/test')
 
 if __name__ == "__main__":
     app.wsgi_app = ProxyFix(app.wsgi_app)
-    admin = Admin(app)
-    admin.add_view(dbforms.UserView(mongo.db.users, 'User'))
     app.run(debug=True)
