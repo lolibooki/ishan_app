@@ -49,7 +49,7 @@ def my_expired_token_callback(expired_token):
 @app.route('/mail/sent')
 @app.route('/login')
 @app.route('/course/<course>')
-def index(course):
+def index(course=None):
     return render_template('index.html')
     # return jsonify({'message': 'Hello, World!'})
 
