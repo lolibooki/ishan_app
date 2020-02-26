@@ -39,7 +39,7 @@ def my_expired_token_callback(expired_token):
     }), 403
 
 
-@app.route('/app/')
+@app.route('/')
 def index():
     return render_template('index.html')
     # return jsonify({'message': 'Hello, World!'})
