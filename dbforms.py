@@ -1,6 +1,7 @@
 from wtforms import form, fields, validators, widgets
 from flask_admin.contrib.pymongo import ModelView
 from passlib.hash import pbkdf2_sha256 as sha256
+import models
 
 
 class UserForm(form.Form):
@@ -26,9 +27,8 @@ class UserView(ModelView):
     form = UserForm
 
     def get_list(self, *args, **kwargs):
-        import models
         count, data = super(UserView, self).get_list(*args, **kwargs)
-        # print('get_list')
+        print('get_list')
         course_list = list()
         for item in data:
             if item.get('reccourse'):
@@ -36,19 +36,18 @@ class UserView(ModelView):
         return count, data
 
     def _get_course_list(self, _form):
-        import models
-        # print('_get_course_list')
+        print('_get_course_list')
         courses = [(item['_id'], item['title']) for item in models.rec_courses()]
         _form.reccourse.choices = courses
         return _form
 
     def create_form(self):
-        # print('create_form')
+        print('create_form')
         _form = super(UserView, self).create_form()
         return self._get_course_list(_form)
 
     def edit_form(self, obj):
-        # print('edit_form')
+        print('edit_form')
         _form = super(UserView, self).edit_form(obj)
         return self._get_course_list(_form)
 
@@ -56,5 +55,5 @@ class UserView(ModelView):
         password = model.get('password')
         model['password'] = sha256.hash(password)
         reccourse = model.get('reccourse')
-        # print(reccourse)
+        print(reccourse)
         return model

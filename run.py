@@ -9,7 +9,7 @@ from bson.objectid import ObjectId
 from suds.client import Client
 import datetime
 from flask_admin import Admin
-import dbforms
+# import dbforms
 
 MMERCHANT_ID = 'aca6038e-06a7-11e9-bcad-005056a205be'
 ZARINPAL_WEBSERVICE = 'https://zarinpal.com/pg/services/WebGate/wsdl'
@@ -28,9 +28,6 @@ app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
 jwt = JWTManager(app)
 mongo = PyMongo(app)
 CORS(app)
-
-admin = Admin(app)
-admin.add_view(dbforms.UserView(mongo.db.users, 'User'))
 
 
 @jwt.expired_token_loader
@@ -118,4 +115,6 @@ api.add_resource(resources.Test, '/test')
 
 if __name__ == "__main__":
     app.wsgi_app = ProxyFix(app.wsgi_app)
+    # admin = Admin(app)
+    # admin.add_view(dbforms.UserView(mongo.db.users, 'User'))
     app.run(debug=True)
