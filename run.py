@@ -11,6 +11,12 @@ import datetime
 from flask_admin import Admin
 # import dbforms
 
+from wtforms import form, fields, TextAreaField, widgets
+from flask_admin.form.upload import ImageUploadField
+from flask_admin.contrib.pymongo import ModelView
+from flask_admin.contrib.fileadmin import FileAdmin
+import os.path as op
+
 MMERCHANT_ID = 'aca6038e-06a7-11e9-bcad-005056a205be'
 ZARINPAL_WEBSERVICE = 'https://zarinpal.com/pg/services/WebGate/wsdl'
 
@@ -122,8 +128,59 @@ api.add_resource(resources.Teacher, '/teacher')
 api.add_resource(resources.Test, '/test')
 
 
+class CKTextAreaWidget(widgets.TextArea):
+    def __call__(self, field, **kwargs):
+        if kwargs.get('class'):
+            kwargs['class'] += ' ckeditor'
+        else:
+            kwargs.setdefault('class', 'ckeditor')
+        return super(CKTextAreaWidget, self).__call__(field, **kwargs)
+
+
+class CKTextAreaField(TextAreaField):
+    widget = CKTextAreaWidget()
+
+
+path = op.join(op.dirname(__file__), 'static')
+
+
+class Article(form.Form):
+    title = fields.StringField("title")
+    img = ImageUploadField(label="image", base_path=path)
+    text = CKTextAreaField("text")
+    tags = fields.StringField("tags")
+
+
+class ArticleView(ModelView):
+    extra_js = ['//cdn.ckeditor.com/4.6.0/standard/ckeditor.js']
+    form_overrides = {
+        'body': CKTextAreaField
+    }
+    
+    column_list = ('title', 'img', 'text')
+    column_sortable_list = ('title')
+    can_create = True
+    can_edit = True
+    
+    form = Article
+    
+
+    def on_model_change(self, _form, model, is_created):
+        model['img'].save(op.join('static/articles', model['img'].filename))
+        model['img'] = model['img'].filename
+        model['tags'] = model['tags'].split('-')
+        return model
+
+
+admin = Admin(app, url='/ishanAdmin')
+admin.add_view(FileAdmin(path, '/static/', name='Files'))
+admin.add_view(ArticleView(mongo.db.articles, 'Articles'))
+
+
 if __name__ == "__main__":
     app.wsgi_app = ProxyFix(app.wsgi_app)
-    # admin = Admin(app)
+    # admin = Admin(app, url='/ishanAdmin')
+    # admin.add_view(FileAdmin(path, '/static/', name='Files'))
+    # admin.add_view(ArticleView(mongo.db.articles, 'Articles'))
     # admin.add_view(dbforms.UserView(mongo.db.users, 'User'))
     app.run(debug=True)

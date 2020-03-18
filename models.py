@@ -173,6 +173,17 @@ def get_teachers(_id=None):
     return teachers
 
 
+def get_articles(_id=None):
+    if _id:
+        article = mongo.db.articles.find_one({"_id": ObjectId(_id)})
+        article["_id"] = str(article["_id"])
+        return article
+    articles = [item for item in mongo.db.articles.find()]
+    for art in articles:
+        art["_id"] = str(art["_id"])
+    return articles
+
+
 class RevokedToken:
     def __init__(self, jti):
         self.query = {'jti': jti}
