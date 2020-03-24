@@ -184,6 +184,17 @@ def get_articles(_id=None):
     return articles
 
 
+def get_comments(_id=None):
+    if _id:
+        comment = mongo.db.comments.find_one({"_id": ObjectId(_id)})
+        comment["_id"] = str(comment["_id"])
+        return comment
+    comments = [item for item in mongo.db.comments.find()]
+    for comm in comments:
+        comm["_id"] = str(comm["_id"])
+    return comments
+
+
 class RevokedToken:
     def __init__(self, jti):
         self.query = {'jti': jti}

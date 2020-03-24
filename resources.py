@@ -538,3 +538,17 @@ class Articles(Resource):
             _id = None
         
         return models.get_articles(_id=_id)
+    
+
+class Comments(Resource):
+    def get(self):
+        parser_copy = parser.copy()
+        parser_copy.add_argument('_id', required=False)
+
+        try:
+            data = parser_copy.parse_args()
+            _id = data.get('_id', None)
+        except:
+            _id = None
+        
+        return models.get_comments(_id=_id)

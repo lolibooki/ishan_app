@@ -125,6 +125,8 @@ api.add_resource(resources.CourseDetail, '/getCourseDetail')
 api.add_resource(resources.EditUser, '/editUser')
 api.add_resource(resources.Fields, '/field')
 api.add_resource(resources.Teacher, '/teacher')
+api.add_resource(resources.Articles, '/articles')
+api.add_resource(resources.Comments, '/comments')
 api.add_resource(resources.Test, '/test')
 
 
@@ -157,7 +159,7 @@ class ArticleView(ModelView):
         'body': CKTextAreaField
     }
     
-    column_list = ('title', 'img', 'text')
+    column_list = ('title', 'img')
     column_sortable_list = ('title')
     can_create = True
     can_edit = True
@@ -172,9 +174,38 @@ class ArticleView(ModelView):
         return model
 
 
+class Comment(form.Form):
+    title = fields.StringField("title")
+    name = fields.StringField("name")
+    profession = fields.StringField("prof")
+    img = FileUploadField(label="image", base_path=path)
+    text = CKTextAreaField("text")
+
+
+class CommentView(ModelView):
+    extra_js = ['//cdn.ckeditor.com/4.6.0/standard/ckeditor.js']
+    form_overrides = {
+        'body': CKTextAreaField
+    }
+    
+    column_list = ('title','name','profession', 'img', 'text')
+    column_sortable_list = ('title')
+    can_create = True
+    can_edit = True
+    
+    form = Comment
+    
+    def on_model_change(self, _form, model, is_created):
+        model['img'].save(op.join('static/comments', model['img'].filename))
+        model['img'] = model['img'].filename
+        print('auto')
+        return model
+    
+
 admin = Admin(app, url='/ishanAdmin')
 admin.add_view(FileAdmin(path, '/static/', name='Files'))
 admin.add_view(ArticleView(mongo.db.articles, 'Articles'))
+admin.add_view(CommentView(mongo.db.comments, 'Comments'))
 
 
 if __name__ == "__main__":
