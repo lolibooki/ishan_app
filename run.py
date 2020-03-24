@@ -12,7 +12,7 @@ from flask_admin import Admin
 # import dbforms
 
 from wtforms import form, fields, TextAreaField, widgets
-from flask_admin.form.upload import ImageUploadField
+from flask_admin.form.upload import FileUploadField
 from flask_admin.contrib.pymongo import ModelView
 from flask_admin.contrib.fileadmin import FileAdmin
 import os.path as op
@@ -146,7 +146,7 @@ path = op.join(op.dirname(__file__), 'static')
 
 class Article(form.Form):
     title = fields.StringField("title")
-    img = ImageUploadField(label="image", base_path=path)
+    img = FileUploadField(label="image", base_path=path)
     text = CKTextAreaField("text")
     tags = fields.StringField("tags")
 
