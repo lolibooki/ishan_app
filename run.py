@@ -198,7 +198,6 @@ class CommentView(ModelView):
     def on_model_change(self, _form, model, is_created):
         model['img'].save(op.join('static/comments', model['img'].filename))
         model['img'] = model['img'].filename
-        print('auto')
         return model
     
 

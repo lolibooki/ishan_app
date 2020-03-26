@@ -527,7 +527,7 @@ class Teacher(Resource):
 
 
 class Articles(Resource):
-    def get(self):
+    def post(self):
         parser_copy = parser.copy()
         parser_copy.add_argument('_id', required=False)
 
@@ -541,7 +541,7 @@ class Articles(Resource):
     
 
 class Comments(Resource):
-    def get(self):
+    def post(self):
         parser_copy = parser.copy()
         parser_copy.add_argument('_id', required=False)
 
