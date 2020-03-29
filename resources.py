@@ -552,3 +552,21 @@ class Comments(Resource):
             _id = None
         
         return models.get_comments(_id=_id)
+    
+
+class PreOrder(Resource):
+    def post(self):
+        parser_copy = parser.copy()
+        
+        parser_copy.add_argument('file', type=werkzeug.datastructures.FileStorage, location='files')
+        parser_copy.add_argument('fname', help='This field cannot be blank', required=True)
+        parser_copy.add_argument('lname', help='This field cannot be blank', required=True)
+        parser_copy.add_argument('mphone', help='This field cannot be blank', required=True)
+        parser_copy.add_argument('phone', help='This field cannot be blank', required=True)
+        parser_copy.add_argument('gender', help='This field cannot be blank', required=True)
+        parser_copy.add_argument('city', help='This field cannot be blank', required=True)
+        parser_copy.add_argument('address', help='This field cannot be blank', required=True)
+        parser_copy.add_argument('softskill', help='This field cannot be blank', required=False)
+        parser_copy.add_argument('otherskill', help='This field cannot be blank', required=False)
+        
+        data = parser_copy.parse_args()
