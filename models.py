@@ -144,7 +144,9 @@ def get_message(method, user):
         return mongo.db.messages.find({"receiver": user})
 
 
-def fields(_id=None):
+def fields(_id=None, name=None):
+    if name:
+        return mongo.db.fields.find_one({"name": name})
     if _id:
         _fields = [fi for fi in mongo.db.fields.find({'_id': ObjectId(_id)})]
     else:
@@ -193,6 +195,14 @@ def get_comments(_id=None):
     for comm in comments:
         comm["_id"] = str(comm["_id"])
     return comments
+
+
+def pre_order(order):
+    try:
+        object_id = mongo.db.preorder.insert(order)
+        return object_id
+    except:
+        return False
 
 
 class RevokedToken:

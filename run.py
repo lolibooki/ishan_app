@@ -127,6 +127,7 @@ api.add_resource(resources.Fields, '/field')
 api.add_resource(resources.Teacher, '/teacher')
 api.add_resource(resources.Articles, '/articles')
 api.add_resource(resources.Comments, '/comments')
+api.add_resource(resources.PreOrder, '/preOrder')
 api.add_resource(resources.Test, '/test')
 
 
@@ -165,7 +166,6 @@ class ArticleView(ModelView):
     can_edit = True
     
     form = Article
-    
 
     def on_model_change(self, _form, model, is_created):
         model['img'].save(op.join('static/articles', model['img'].filename))

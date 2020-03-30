@@ -24,6 +24,7 @@ MOBILE = '09190734256'
 EMAIL = 'salamat@salamat.ir'
 SERVER_IP = 'http://136.243.32.187'
 UPLOAD_FOLDER = "static/uploads"
+COURSE_REQUESTS = "static/requests"
 ACCESS_TOKEN_EXPIRE = datetime.timedelta(minutes=30)  # access token expiration time
 parser = reqparse.RequestParser()
 # parser.add_argument('fname', help = 'This field cannot be blank', required = True)
@@ -568,5 +569,54 @@ class PreOrder(Resource):
         parser_copy.add_argument('address', help='This field cannot be blank', required=True)
         parser_copy.add_argument('softskill', help='This field cannot be blank', required=False)
         parser_copy.add_argument('otherskill', help='This field cannot be blank', required=False)
-        
+        parser_copy.add_argument('course', help='This field cannot be blank', required=True)
+        parser_copy.add_argument('adv_time', help='This field cannot be blank', required=True)
+
         data = parser_copy.parse_args()
+
+        try:
+            course = models.rec_courses(_id=data['course'])
+        except:
+            return {'status': 400,
+                    'message': 'invalid course id'}
+
+        field = models.fields(name=course['field_name'])
+
+        if data['file'] is None:
+            for item in field['clist']:
+                if course["_id"] in item['course']:
+                    if int(item['term']) > 1:
+                        return {'status': 400,
+                                'message': 'course has prerequisite, must include project file'}
+
+        order = {
+            'fname': data['fname'],
+            'lname': data['lname'],
+            'mphone': data['mphone'],
+            'adv_time': datetime.datetime.strptime(data['adv_time'], "%Y-%m-%dT%H:%M:%S"),
+            'phone': data['phone'],
+            'gender': data['gender'],
+            'city': data['city'],
+            'address': data['address'],
+            'softskill': data.get('softskill', None),
+            'otherskill': data.get('otherskill', None),
+            'course': data['course'],
+            'status': 0
+        }
+
+        file = data['file']
+        if file:
+            # file name format is: "date-username-filename" like: "201985-AhmadTroy-file.zip"
+            file_name = '{}-{}-{}'.format(str(datetime.datetime.now().date()).replace('-', ''),
+                                          data['fname']+data['lname'],
+                                          file.filename)
+            file.save(os.path.join(COURSE_REQUESTS, file_name))
+            order['attach'] = os.path.join(UPLOAD_FOLDER, file_name)
+
+        sub = models.pre_order(order)
+        if not sub:
+            return {'status': 500,
+                    'message': 'something went wrong'}
+        else:
+            return {'status': 200,
+                    'message': 'pre order submitted'}
