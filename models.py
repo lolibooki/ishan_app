@@ -147,7 +147,7 @@ def get_message(method, user):
 def fields(_id=None, name=None):
     if name:
         _fields = [fi for fi in mongo.db.fields.find({"name": name})]
-    if _id:
+    elif _id:
         _fields = [fi for fi in mongo.db.fields.find({'_id': ObjectId(_id)})]
     else:
         _fields = [fi for fi in mongo.db.fields.find()]
