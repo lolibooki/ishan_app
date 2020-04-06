@@ -485,9 +485,14 @@ class Fields(Resource):
         try:
             data = parser_copy.parse_args()
             _id = data.get('_id', None)
+        except:
+            _id = None
+
+        try:
+            data = parser_copy.parse_args()
             field_name = data.get('field_name', None)
         except:
-            _id, field_name = None, None
+            field_name = None
 
         if field_name is not None:
             fields = models.fields(name=field_name)
