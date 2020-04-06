@@ -480,14 +480,20 @@ class Fields(Resource):
     def post(self):
         parser_copy = parser.copy()
         parser_copy.add_argument('_id', required=False)
+        parser_copy.add_argument('field_name', required=False)
 
         try:
             data = parser_copy.parse_args()
             _id = data.get('_id', None)
+            field_name = data.get('field_name', None)
         except:
-            _id = None
+            _id, field_name = None, None
 
-        fields = models.fields(_id=_id)
+        if field_name is not None:
+            fields = models.fields(name=field_name)
+        else:
+            fields = models.fields(_id=_id)
+
         for item in fields:
             duration = 0
             for _item in item['clist']:

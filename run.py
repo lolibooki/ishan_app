@@ -188,8 +188,8 @@ class CommentView(ModelView):
         'body': CKTextAreaField
     }
     
-    column_list = ('title','name','profession', 'img', 'text')
-    column_sortable_list = ('title')
+    column_list = ('title', 'name', 'profession', 'img', 'text')
+    column_sortable_list = 'title'
     can_create = True
     can_edit = True
     
@@ -201,7 +201,7 @@ class CommentView(ModelView):
         return model
     
 
-admin = Admin(app, url='/ishanAdmin')
+admin = Admin(app, url='/ishanAdmin', template_mode='bootstrap3')
 admin.add_view(FileAdmin(path, '/static/', name='Files'))
 admin.add_view(ArticleView(mongo.db.articles, 'Articles'))
 admin.add_view(CommentView(mongo.db.comments, 'Comments'))
