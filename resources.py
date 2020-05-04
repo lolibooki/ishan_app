@@ -671,7 +671,7 @@ class SetUserStatus(Resource):
         try:
             last_seen = user['reccourse'][data['_id']]['status']['lastSeen']
         except:
-            user['reccourse'][data['_id']] = {'status': {'lastSeen': {}}}
+            user['reccourse'][data['_id']] = {'status': {'lastSeen': {'week': 0, 'part': 0}}}
             last_seen = user['reccourse'][data['_id']]['status']['lastSeen']
 
         if int(data['week']) < int(last_seen['week']):
