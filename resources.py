@@ -668,11 +668,17 @@ class SetUserStatus(Resource):
             return {'status': 400,
                     'message': 'course id is invalid'}
 
-        if int(data['week']) < int(user['reccourse'][data['_id']]['status']['lastSeen']['week']):
+        try:
+            last_seen = user['reccourse'][data['_id']]['status']['lastSeen']
+        except:
+            user['reccourse'][data['_id']] = {'status': {'lastSeen': {}}}
+            last_seen = user['reccourse'][data['_id']]['status']['lastSeen']
+
+        if int(data['week']) < int(last_seen['week']):
             return {'status': 401,
                     'message': 'user is ahead'}
         else:
-            if int(data['part']) < int(user['reccourse'][data['_id']]['status']['lastSeen']['part']):
+            if int(data['part']) < int(last_seen['part']):
                 return {'status': 401,
                         'message': 'user id ahead'}
 
