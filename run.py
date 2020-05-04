@@ -128,6 +128,8 @@ api.add_resource(resources.Teacher, '/teacher')
 api.add_resource(resources.Articles, '/articles')
 api.add_resource(resources.Comments, '/comments')
 api.add_resource(resources.PreOrder, '/preOrder')
+api.add_resource(resources.GetUserStatus, '/getStatus')
+api.add_resource(resources.SetUserStatus, '/setStatus')
 api.add_resource(resources.Test, '/test')
 
 

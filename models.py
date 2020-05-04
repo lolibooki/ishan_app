@@ -13,7 +13,7 @@ def find_user(key):
 
 
 def update_user(user, data):
-    if mongo.db.users.update(user, {"$set":data}):
+    if mongo.db.users.update(user, {"$set": data}):
         return True
     return False
 
@@ -48,7 +48,7 @@ def get_user_ip_course(course_id):
 def add_user_ip_course(user_id, course_id):
     temp = find_user({"_id": ObjectId(user_id)})['ipcourse']
     temp.append(ObjectId(course_id))
-    mongo.db.users.update({"_id": ObjectId(user_id)}, {'$set':{'ipcourse': temp}})
+    mongo.db.users.update({"_id": ObjectId(user_id)}, {'$set': {'ipcourse': temp}})
 
 
 def rec_courses(_id=None):

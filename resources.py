@@ -631,3 +631,55 @@ class PreOrder(Resource):
         else:
             return {'status': 200,
                     'message': 'pre order submitted'}
+
+
+class GetUserStatus(Resource):
+    @jwt_required
+    def post(self):
+        parser_copy = parser.copy()
+        parser_copy.add_argument('_id', help='This field cannot be blank', required=True)
+
+        data = parser_copy.parse_args()
+
+        current_user = get_jwt_identity()
+        user = models.find_user({'mphone': current_user})
+
+        if data['_id'] in user['reccourse'].keys():
+            return user['reccourse'][data['_id']]['status']['lastSeen']
+        else:
+            return {'status': 400,
+                    'message': 'course id is invalid'}
+
+
+class SetUserStatus(Resource):
+    @jwt_required
+    def post(self):
+        parser_copy = parser.copy()
+        parser_copy.add_argument('_id', help='This field cannot be blank', required=True)
+        parser_copy.add_argument('week', help='This field cannot be blank', required=True)
+        parser_copy.add_argument('part', help='This field cannot be blank', required=True)
+
+        data = parser_copy.parse_args()
+
+        current_user = get_jwt_identity()
+        user = models.find_user({'mphone': current_user})
+
+        if data['_id'] not in user['reccourse'].keys():
+            return {'status': 400,
+                    'message': 'course id is invalid'}
+
+        if int(data['week']) < int(user['reccourse'][data['_id']]['status']['lastSeen']['week']):
+            return {'status': 401,
+                    'message': 'user is ahead'}
+        else:
+            if int(data['part']) < int(user['reccourse'][data['_id']]['status']['lastSeen']['part']):
+                return {'status': 401,
+                        'message': 'user id ahead'}
+
+        user['reccourse'][data['_id']]['status']['lastSeen'] = {'week': data['week'],
+                                                                'part': data['part']}
+
+        models.update_user({"_id": user["_id"]}, {'reccourse': user['reccourse']})
+
+        return {'status': 200,
+                'message': 'status updated'}
