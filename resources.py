@@ -688,4 +688,8 @@ class SetUserStatus(Resource):
         models.update_user({"_id": user["_id"]}, {'reccourse': user['reccourse']})
 
         return {'status': 200,
-                'message': 'status updated'}
+                'message': 'status updated',
+                'data': {
+                    'week': data['week'],
+                    'part': data['part']
+                }}
