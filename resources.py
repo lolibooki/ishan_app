@@ -289,7 +289,7 @@ class GetUserRecCourses(Resource):
             else:
                 week_delta = current_time[1] + 52 - course_time[1]
             for week in current_course['weeks']:
-                if int(week) >= week_delta:
+                if int(week) > week_delta + 1:
                     current_course['weeks'][week] = None
             current_course['s_time'] = current_course['s_time'].isoformat()
             courses.append(current_course)
