@@ -664,6 +664,8 @@ class SetUserStatus(Resource):
         current_user = get_jwt_identity()
         user = models.find_user({'mphone': current_user})
 
+        logging.info('set status. user: {}'.format(user["mphone"]))
+
         if data['_id'] not in user['reccourse'].keys():
             return {'status': 400,
                     'message': 'course id is invalid'}
