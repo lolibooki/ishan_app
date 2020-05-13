@@ -718,6 +718,7 @@ class GetQuiz(Resource):
             user["reccourse"][data["course_id"]]["exams"]["quiz_id"] = [{"attempt": 1,
                                                                          "start": datetime.datetime.now()}]
         else:
+            print("test")
             if user["reccourse"][data["course_id"]]["exams"]["quiz_id"][-1].get("end") is None:
                 user["reccourse"][data["course_id"]]["exams"]["quiz_id"][-1]["end"] = "unfinished"
                 return {'status': 403,
@@ -728,7 +729,7 @@ class GetQuiz(Resource):
                                                                                  "start": datetime.datetime.now()})
             return {'status': 401,
                     'message': 'no attempt left'}
-            
+
         logging.info('user {} starts quiz.'.format(user['mphone']))
         models.update_user({"_id": user["_id"]}, {"reccourse": user["reccourse"]})
         return {"status": 200,
