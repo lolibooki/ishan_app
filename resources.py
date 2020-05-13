@@ -720,6 +720,7 @@ class GetQuiz(Resource):
         else:
             if user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]][-1].get("end") is None:
                 user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]][-1]["end"] = "unfinished"
+                models.update_user({"_id": user["_id"]}, {"reccourse": user["reccourse"]})
                 return {'status': 403,
                         'message': 'last quiz was unfinished'}
             attempt_num = len(user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]])
