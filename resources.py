@@ -290,8 +290,11 @@ class GetUserRecCourses(Resource):
             for week in current_course['weeks']:
                 if int(week) > week_delta + 1:
                     current_course['weeks'][week] = None
-                if user["reccourse"][str(item)]["exams"][week["quiz"]][-1]["passed"] is False:
-                    current_course['weeks'][week] = None
+                try:
+                    if user["reccourse"][str(item)]["exams"][week["quiz"]][-1]["passed"] is False:
+                        current_course['weeks'][week] = None
+                except:
+                    pass
             current_course['s_time'] = current_course['s_time'].isoformat()
             courses.append(current_course)
         return courses
