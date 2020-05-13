@@ -724,13 +724,13 @@ class GetQuiz(Resource):
                 return {'status': 403,
                         'message': 'last quiz was unfinished'}
             attempt_num = len(user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]])
-            print(attempt_num)
             if attempt_num < quiz["attemptLock"]:
                 user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]].append({"attempt": attempt_num+1,
                                                                                        "start": datetime.datetime.now()}
                                                                                       )
-            return {'status': 401,
-                    'message': 'no attempt left'}
+            else:
+                return {'status': 401,
+                        'message': 'no attempt left'}
 
         logging.info('user {} starts quiz.'.format(user['mphone']))
         models.update_user({"_id": user["_id"]}, {"reccourse": user["reccourse"]})
