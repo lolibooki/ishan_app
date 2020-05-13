@@ -729,7 +729,7 @@ class GetQuiz(Resource):
             user["reccourse"][data["course_id"]]["exams"]["quiz_id"] = [{"attempt": 1,
                                                                          "start": datetime.datetime.now()}]
 
-        logging.info('user {} starts quiz.'.format(data['mphone']))
+        logging.info('user {} starts quiz.'.format(user['mphone']))
         models.update_user({"_id": user["_id"]}, {"reccourse": user["reccourse"]})
         return {"status": 200,
                 "questions": quiz["questions"],
@@ -750,6 +750,8 @@ class SubmitQuiz(Resource):
 
         current_user = get_jwt_identity()
         user = models.find_user({'mphone': current_user})
+
+        logging.info('user {} starts quiz.'.format(user['mphone']))
 
         quiz = models.get_quiz(data["quiz_id"])
 
