@@ -715,7 +715,7 @@ class GetQuiz(Resource):
         quiz = models.get_quiz(data["quiz_id"])
 
         if user["reccourse"][data["course_id"]]["exams"].get(data["quiz_id"]) is None:
-            user["reccourse"][data["course_id"]]["exams"]["quiz_id"] = [{"attempt": 1,
+            user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]] = [{"attempt": 1,
                                                                          "start": datetime.datetime.now()}]
         else:
             if user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]][-1].get("end") is None:
