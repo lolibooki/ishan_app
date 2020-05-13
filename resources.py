@@ -724,6 +724,7 @@ class GetQuiz(Resource):
                 return {'status': 403,
                         'message': 'last quiz was unfinished'}
             attempt_num = len(user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]])
+            print(attempt_num)
             if attempt_num < quiz["attemptLock"]:
                 user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]].append({"attempt": attempt_num+1,
                                                                                        "start": datetime.datetime.now()}
