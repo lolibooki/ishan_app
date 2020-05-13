@@ -205,6 +205,16 @@ def pre_order(order):
         return False
 
 
+def get_quiz(_id):
+    quiz = mongo.db.quiz.find_one({"_id": ObjectId(_id)})
+    quiz["_id"] = str(quiz["_id"])
+    return quiz
+
+
+def submit_score(score):
+    mongo.db.quiz.insert(score)
+
+
 class RevokedToken:
     def __init__(self, jti):
         self.query = {'jti': jti}

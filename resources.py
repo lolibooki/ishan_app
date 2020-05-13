@@ -275,8 +275,7 @@ class GetUserRecCourses(Resource):
         user = models.find_user({'mphone': current_user})
         rec_course_ids = [ObjectId(_id) for _id in user['reccourse'].keys()]
         current_date = datetime.datetime.now()
-        current_time = datetime.date(
-            current_date.year, current_date.month, current_date.day).isocalendar()
+        current_time = datetime.date(current_date.year, current_date.month, current_date.day).isocalendar()
         courses = list()
         for item in rec_course_ids:
             current_course = models.get_user_rec_course(item)
@@ -290,6 +289,8 @@ class GetUserRecCourses(Resource):
                 week_delta = current_time[1] + 52 - course_time[1]
             for week in current_course['weeks']:
                 if int(week) > week_delta + 1:
+                    current_course['weeks'][week] = None
+                if user["reccourse"][str(item)]["exams"][week["quiz"]][-1]["passed"] is False:
                     current_course['weeks'][week] = None
             current_course['s_time'] = current_course['s_time'].isoformat()
             courses.append(current_course)
@@ -456,8 +457,7 @@ class GetMessages(Resource):
 class CourseDetail(Resource):
     def post(self):
         parser_copy = parser.copy()
-        parser_copy.add_argument(
-            '_id', help='This field cannot be blank', required=True)
+        parser_copy.add_argument('_id', help='This field cannot be blank', required=True)
 
         data = parser_copy.parse_args()
 
@@ -695,3 +695,126 @@ class SetUserStatus(Resource):
                     'week': data['week'],
                     'part': data['part']
                 }}
+
+
+class GetQuiz(Resource):
+    @jwt_required
+    def post(self):
+        parser_copy = parser.copy()
+        parser_copy.add_argument('course_id', help='This field cannot be blank', required=True)
+        parser_copy.add_argument('quiz_id', help='This field cannot be blank', required=True)
+
+        data = parser_copy.parse_args()
+
+        current_user = get_jwt_identity()
+        user = models.find_user({'mphone': current_user})
+
+        quiz = models.get_quiz(data["quiz_id"])
+
+        if user["reccourse"][data["course_id"]]["exams"].get(data["quiz_id"]) is not None:
+            if user["reccourse"][data["course_id"]]["exams"]["quiz_id"][-1].get("end") is None:
+                user["reccourse"][data["course_id"]]["exams"]["quiz_id"][-1]["end"] = "unfinished"
+                return {'status': 403,
+                        'message': 'last quiz was unfinished'}
+            attempt_num = len(user["reccourse"][data["course_id"]]["exams"]["quiz_id"])
+            if attempt_num < quiz["attemptLock"]:
+                user["reccourse"][data["course_id"]]["exams"]["quiz_id"].append({"attempt": attempt_num+1,
+                                                                                 "start": datetime.datetime.now()})
+            return {'status': 401,
+                    'message': 'no attempt left'}
+        else:
+            user["reccourse"][data["course_id"]]["exams"]["quiz_id"] = [{"attempt": 1,
+                                                                         "start": datetime.datetime.now()}]
+
+        logging.info('user {} starts quiz.'.format(data['mphone']))
+        models.update_user({"_id": user["_id"]}, {"reccourse": user["reccourse"]})
+        return {"status": 200,
+                "questions": quiz["questions"],
+                "attempts_remaining": quiz["attemptLock"]-len(user["reccourse"][data["course_id"]]["exams"]["quiz_id"])}
+
+
+class SubmitQuiz(Resource):
+    @jwt_required
+    def post(self):
+        time = datetime.datetime.now()
+
+        parser_copy = parser.copy()
+        parser_copy.add_argument('course_id', help='This field cannot be blank', required=True)
+        parser_copy.add_argument('quiz_id', help='This field cannot be blank', required=True)
+        parser_copy.add_argument('answers', help='This field cannot be blank', required=True)
+
+        data = parser_copy.parse_args()
+
+        current_user = get_jwt_identity()
+        user = models.find_user({'mphone': current_user})
+
+        quiz = models.get_quiz(data["quiz_id"])
+
+        user["reccourse"][data["course_id"]]["exams"]["quiz_id"][-1]["end"] = time
+
+        if (time - user["reccourse"][data["course_id"]]["exams"]["quiz_id"][-1]["start"]).seconds > quiz["time"]:
+            user["reccourse"][data["course_id"]]["exams"]["quiz_id"][-1]["score"] = 0
+            user["reccourse"][data["course_id"]]["exams"]["quiz_id"][-1]["passed"] = False
+            models.update_user({"_id": user["_id"]}, {"reccourse": user["reccourse"]})
+            return {"status": 403,
+                    "messsage": "time passed"}
+
+        score = self.quiz_correction(data["answers"], quiz["answers"], quiz["points"])
+        if isinstance(score, list):
+            return {"status": 400,
+                    "message": score}
+
+        user_answers = data["answers"]
+        user_answers["user"] = user["_id"]
+        user_answers["exam"] = quiz["_id"]
+        user_answers["course"] = ObjectId(data["course_id"])
+        models.submit_score(user_answers)
+
+        user["reccourse"][data["course_id"]]["exams"]["quiz_id"][-1]["score"] = score
+
+        if score >= quiz["accept"]:
+            user["reccourse"][data["course_id"]]["exams"]["quiz_id"][-1]["passed"] = True
+            models.update_user({"_id": user["_id"]}, {"reccourse": user["reccourse"]})
+            return {"status": 200,
+                    "score": score}
+        else:
+            user["reccourse"][data["course_id"]]["exams"]["quiz_id"][-1]["passed"] = False
+            models.update_user({"_id": user["_id"]}, {"reccourse": user["reccourse"]})
+            return {"status": 201,
+                    "score": score}
+
+    def quiz_correction(self, user_answers, correct_answers, points):
+        final_point = 0
+        errors = list()
+
+        if len(user_answers) < len(correct_answers):
+            errors.append("answer count does not match")
+            return errors
+
+        for item in correct_answers:
+            if item["type"] == "test":
+                if item["answer"] == user_answers[item]:
+                    final_point += points[int(item)-1]
+            elif item["type"] == "blank":
+                if item["ordered"] is True:
+                    corrects = 0
+                    for i in range(len(item["answer"])):
+                        if item['answer'][i] == user_answers[item][i]:
+                            corrects += 1
+                    final_point += points[int(item) - 1] / len(item["answer"]) * corrects
+                else:
+                    corrects = 0
+                    for answer in item["answer"]:
+                        if answer in user_answers[item]:
+                            corrects += 1
+                    final_point += points[int(item) - 1] / len(item["answer"]) * corrects
+            elif item["type"] == "tf":
+                corrects = 0
+                for i in range(len(item["answer"])):
+                    if item['answer'][i] == user_answers[item][i]:
+                        corrects += 1
+                final_point += points[int(item) - 1] / len(item["answer"]) * corrects
+            else:
+                pass
+
+        return final_point
