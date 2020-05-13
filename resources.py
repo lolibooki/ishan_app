@@ -718,15 +718,15 @@ class GetQuiz(Resource):
             user["reccourse"][data["course_id"]]["exams"]["quiz_id"] = [{"attempt": 1,
                                                                          "start": datetime.datetime.now()}]
         else:
-            print("test")
-            if user["reccourse"][data["course_id"]]["exams"]["quiz_id"][-1].get("end") is None:
-                user["reccourse"][data["course_id"]]["exams"]["quiz_id"][-1]["end"] = "unfinished"
+            if user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]][-1].get("end") is None:
+                user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]][-1]["end"] = "unfinished"
                 return {'status': 403,
                         'message': 'last quiz was unfinished'}
-            attempt_num = len(user["reccourse"][data["course_id"]]["exams"]["quiz_id"])
+            attempt_num = len(user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]])
             if attempt_num < quiz["attemptLock"]:
-                user["reccourse"][data["course_id"]]["exams"]["quiz_id"].append({"attempt": attempt_num+1,
-                                                                                 "start": datetime.datetime.now()})
+                user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]].append({"attempt": attempt_num+1,
+                                                                                       "start": datetime.datetime.now()}
+                                                                                      )
             return {'status': 401,
                     'message': 'no attempt left'}
 
@@ -734,7 +734,8 @@ class GetQuiz(Resource):
         models.update_user({"_id": user["_id"]}, {"reccourse": user["reccourse"]})
         return {"status": 200,
                 "questions": quiz["questions"],
-                "attempts_remaining": quiz["attemptLock"]-len(user["reccourse"][data["course_id"]]["exams"]["quiz_id"])}
+                "attempts_remaining": quiz["attemptLock"] -
+                                      len(user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]])}
 
 
 class SubmitQuiz(Resource):
@@ -756,11 +757,11 @@ class SubmitQuiz(Resource):
 
         quiz = models.get_quiz(data["quiz_id"])
 
-        user["reccourse"][data["course_id"]]["exams"]["quiz_id"][-1]["end"] = time
+        user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]][-1]["end"] = time
 
-        if (time - user["reccourse"][data["course_id"]]["exams"]["quiz_id"][-1]["start"]).seconds > quiz["time"]:
-            user["reccourse"][data["course_id"]]["exams"]["quiz_id"][-1]["score"] = 0
-            user["reccourse"][data["course_id"]]["exams"]["quiz_id"][-1]["passed"] = False
+        if (time - user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]][-1]["start"]).seconds > quiz["time"]:
+            user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]][-1]["score"] = 0
+            user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]][-1]["passed"] = False
             models.update_user({"_id": user["_id"]}, {"reccourse": user["reccourse"]})
             return {"status": 403,
                     "messsage": "time passed"}
@@ -776,15 +777,15 @@ class SubmitQuiz(Resource):
         user_answers["course"] = ObjectId(data["course_id"])
         models.submit_score(user_answers)
 
-        user["reccourse"][data["course_id"]]["exams"]["quiz_id"][-1]["score"] = score
+        user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]][-1]["score"] = score
 
         if score >= quiz["accept"]:
-            user["reccourse"][data["course_id"]]["exams"]["quiz_id"][-1]["passed"] = True
+            user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]][-1]["passed"] = True
             models.update_user({"_id": user["_id"]}, {"reccourse": user["reccourse"]})
             return {"status": 200,
                     "score": score}
         else:
-            user["reccourse"][data["course_id"]]["exams"]["quiz_id"][-1]["passed"] = False
+            user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]][-1]["passed"] = False
             models.update_user({"_id": user["_id"]}, {"reccourse": user["reccourse"]})
             return {"status": 201,
                     "score": score}
