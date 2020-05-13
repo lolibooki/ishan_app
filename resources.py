@@ -799,30 +799,30 @@ class SubmitQuiz(Resource):
         if len(user_answers) < len(correct_answers):
             errors.append("answer count does not match")
             return errors
-        print(correct_answers)
+        
         for item in correct_answers:
-            if item["type"] == "test":
+            if correct_answers[item]["type"] == "test":
                 if item["answer"] == user_answers[item]:
                     final_point += points[int(item)-1]
-            elif item["type"] == "blank":
-                if item["ordered"] is True:
+            elif correct_answers[item]["type"] == "blank":
+                if correct_answers[item]["ordered"] is True:
                     corrects = 0
-                    for i in range(len(item["answer"])):
+                    for i in range(len(correct_answers[item]["answer"])):
                         if item['answer'][i] == user_answers[item][i]:
                             corrects += 1
-                    final_point += points[int(item) - 1] / len(item["answer"]) * corrects
+                    final_point += points[int(item) - 1] / len(correct_answers[item]["answer"]) * corrects
                 else:
                     corrects = 0
-                    for answer in item["answer"]:
+                    for answer in correct_answers[item]["answer"]:
                         if answer in user_answers[item]:
                             corrects += 1
-                    final_point += points[int(item) - 1] / len(item["answer"]) * corrects
-            elif item["type"] == "tf":
+                    final_point += points[int(item) - 1] / len(correct_answers[item]["answer"]) * corrects
+            elif correct_answers[item]["type"] == "tf":
                 corrects = 0
-                for i in range(len(item["answer"])):
-                    if item['answer'][i] == user_answers[item][i]:
+                for i in range(len(correct_answers[item]["answer"])):
+                    if correct_answers[item]['answer'][i] == user_answers[item][i]:
                         corrects += 1
-                final_point += points[int(item) - 1] / len(item["answer"]) * corrects
+                final_point += points[int(item) - 1] / len(correct_answers[item]["answer"]) * corrects
             else:
                 pass
 
