@@ -799,7 +799,7 @@ class SubmitQuiz(Resource):
         if len(user_answers) < len(correct_answers):
             errors.append("answer count does not match")
             return errors
-
+        print(correct_answers)
         for item in correct_answers:
             if item["type"] == "test":
                 if item["answer"] == user_answers[item]:
