@@ -774,7 +774,7 @@ class SubmitQuiz(Resource):
             return {"status": 400,
                     "message": score}
 
-        user_answers = data["answers"]
+        user_answers = ast.literal_eval(data["answers"])
         user_answers["user"] = user["_id"]
         user_answers["exam"] = quiz["_id"]
         user_answers["course"] = ObjectId(data["course_id"])
