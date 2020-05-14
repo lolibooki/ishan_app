@@ -799,7 +799,7 @@ class SubmitQuiz(Resource):
         if len(user_answers) < len(correct_answers):
             errors.append("answer count does not match")
             return errors
-        
+
         for item in correct_answers:
             if correct_answers[item]["type"] == "test":
                 if item["answer"] == user_answers[item]:
@@ -813,6 +813,8 @@ class SubmitQuiz(Resource):
                     final_point += points[int(item) - 1] / len(correct_answers[item]["answer"]) * corrects
                 else:
                     corrects = 0
+                    print(item)
+                    print(user_answers)
                     for answer in correct_answers[item]["answer"]:
                         if answer in user_answers[item]:
                             corrects += 1
