@@ -814,7 +814,7 @@ class SubmitQuiz(Resource):
                 else:
                     corrects = 0
                     print(item)
-                    print(user_answers[item])
+                    print(user_answers[1])
                     for answer in correct_answers[item]["answer"]:
                         print(answer)
                         if answer in user_answers[item]:
