@@ -292,6 +292,7 @@ class GetUserRecCourses(Resource):
                 if int(week) > week_delta + 1:
                     current_course['weeks'][week] = None
                 try:
+                    print("try", str(item), user["reccourse"][str(item)]["exams"][week["quiz"]][-1]["passed"])
                     if user["reccourse"][str(item)]["exams"][week["quiz"]][-1]["passed"] is False:
                         current_course['weeks'][week] = None
                 except:
