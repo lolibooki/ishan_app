@@ -718,7 +718,7 @@ class GetQuiz(Resource):
 
         if user["reccourse"][data["course_id"]]["exams"].get(data["quiz_id"]) is None:
             user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]] = [{"attempt": 1,
-                                                                         "start": datetime.datetime.now()}]
+                                                                               "start": datetime.datetime.now()}]
         else:
             if user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]][-1].get("end") is None:
                 user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]][-1]["end"] = "unfinished"
@@ -738,6 +738,9 @@ class GetQuiz(Resource):
         models.update_user({"_id": user["_id"]}, {"reccourse": user["reccourse"]})
         return {"status": 200,
                 "questions": quiz["questions"],
+                "quiz_time": quiz["time"],
+                "min_score": quiz["accept"],
+                "negative_points": quiz["negPoint"],
                 "attempts_remaining": quiz["attemptLock"] -
                                       len(user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]])}
 
