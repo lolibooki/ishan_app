@@ -816,7 +816,7 @@ class SubmitQuiz(Resource):
                     print(item)
                     print(user_answers)
                     for answer in correct_answers[item]["answer"]:
-                        if answer in user_answers[item]:
+                        if answer in user_answers[str(item)]:
                             corrects += 1
                     final_point += points[int(item) - 1] / len(correct_answers[item]["answer"]) * corrects
             elif correct_answers[item]["type"] == "tf":
