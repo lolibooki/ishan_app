@@ -14,7 +14,7 @@ import werkzeug, os
 import models
 import datetime
 from bson import ObjectId
-import json
+import ast
 import logging
 
 # TODO: make settings file instead of below!
@@ -769,7 +769,7 @@ class SubmitQuiz(Resource):
             return {"status": 403,
                     "messsage": "time passed"}
 
-        score = self.quiz_correction(json.loads(data["answers"]), quiz["answers"], quiz["points"])
+        score = self.quiz_correction(ast.literal_eval(data["answers"]), quiz["answers"], quiz["points"])
         if isinstance(score, list):
             return {"status": 400,
                     "message": score}
