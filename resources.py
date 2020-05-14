@@ -292,7 +292,7 @@ class GetUserRecCourses(Resource):
                 if int(week) > week_delta + 1:
                     current_course['weeks'][week] = None
                 try:
-                    if user["reccourse"][str(item)]["exams"][current_course['weeks']["quiz"]][-1]["passed"] is False:
+                    if user["reccourse"][str(item)]["exams"][current_course['weeks'][week]["quiz"]][-1]["passed"] is False:
                         current_course['weeks'][week] = None
                 except:
                     pass
@@ -756,7 +756,7 @@ class SubmitQuiz(Resource):
         current_user = get_jwt_identity()
         user = models.find_user({'mphone': current_user})
 
-        logging.info('user {} starts quiz.'.format(user['mphone']))
+        logging.info('user {} submits quiz.'.format(user['mphone']))
 
         quiz = models.get_quiz(data["quiz_id"])
 
