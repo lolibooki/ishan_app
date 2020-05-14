@@ -802,13 +802,13 @@ class SubmitQuiz(Resource):
 
         for item in correct_answers:
             if correct_answers[item]["type"] == "test":
-                if item["answer"] == user_answers[item]:
+                if correct_answers[item]["answer"] == user_answers[item]:
                     final_point += points[int(item)-1]
             elif correct_answers[item]["type"] == "blank":
                 if correct_answers[item]["ordered"] is True:
                     corrects = 0
                     for i in range(len(correct_answers[item]["answer"])):
-                        if item['answer'][i] == user_answers[item][i]:
+                        if correct_answers[item]['answer'][i] == user_answers[item][i]:
                             corrects += 1
                     final_point += points[int(item) - 1] / len(correct_answers[item]["answer"]) * corrects
                 else:
@@ -816,7 +816,8 @@ class SubmitQuiz(Resource):
                     print(item)
                     print(user_answers)
                     for answer in correct_answers[item]["answer"]:
-                        if answer in user_answers[str(item)]:
+                        print(answer)
+                        if answer in user_answers[item]:
                             corrects += 1
                     final_point += points[int(item) - 1] / len(correct_answers[item]["answer"]) * corrects
             elif correct_answers[item]["type"] == "tf":
