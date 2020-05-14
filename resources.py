@@ -14,6 +14,7 @@ import werkzeug, os
 import models
 import datetime
 from bson import ObjectId
+import json
 import logging
 
 # TODO: make settings file instead of below!
@@ -768,7 +769,7 @@ class SubmitQuiz(Resource):
             return {"status": 403,
                     "messsage": "time passed"}
 
-        score = self.quiz_correction(data["answers"], quiz["answers"], quiz["points"])
+        score = self.quiz_correction(json.loads(data["answers"]), quiz["answers"], quiz["points"])
         if isinstance(score, list):
             return {"status": 400,
                     "message": score}
@@ -813,10 +814,7 @@ class SubmitQuiz(Resource):
                     final_point += points[int(item) - 1] / len(correct_answers[item]["answer"]) * corrects
                 else:
                     corrects = 0
-                    print(item)
-                    print(user_answers[1:3])
                     for answer in correct_answers[item]["answer"]:
-                        print(answer)
                         if answer in user_answers[item]:
                             corrects += 1
                     final_point += points[int(item) - 1] / len(correct_answers[item]["answer"]) * corrects
