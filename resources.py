@@ -294,7 +294,7 @@ class GetUserRecCourses(Resource):
                     current_course['weeks'][week] = None
                 try:
                     _last = user["reccourse"][str(item)]["exams"][current_course['weeks'][week]["quiz"]][-1]
-                    if _last["passed"] is False or _last["end"] == "unfinished":
+                    if _last["passed"] is False or _last["end"] == "unfinished" or _last.get("end") is None:
                         null_maker = True
                 except:
                     pass
