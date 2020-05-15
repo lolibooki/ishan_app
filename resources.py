@@ -298,7 +298,7 @@ class GetUserRecCourses(Resource):
                 if current_course['weeks'][week].get("quiz") is None:
                     null_maker = False
                 else:
-                    if user["reccourse"][str(item)]["exams"].get([current_course['weeks'][week]["quiz"]]) is None:
+                    if user["reccourse"][str(item)]["exams"].get(current_course['weeks'][week]["quiz"]) is None:
                         null_maker = True
                     else:
                         _last = user["reccourse"][str(item)]["exams"][current_course['weeks'][week]["quiz"]][-1]
