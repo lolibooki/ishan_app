@@ -290,7 +290,7 @@ class GetUserRecCourses(Resource):
                 week_delta = current_time[1] + 52 - course_time[1]
             null_maker = False  # use for nullify weeks after not passed quiz
             for week in current_course['weeks']:
-                if null_maker is True or int(week) > week_delta + 1:
+                if null_maker is True or int(week) > week_delta:
                     current_course['weeks'][week] = None
                 try:
                     if user["reccourse"][str(item)]["exams"][current_course['weeks'][week]["quiz"]][-1]["passed"] is False:
