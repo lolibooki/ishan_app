@@ -215,6 +215,10 @@ def submit_score(score):
     mongo.db.quiz.insert(score)
 
 
+def submit_exam(exam):
+    mongo.db.exam.insert(exam)
+
+
 class RevokedToken:
     def __init__(self, jti):
         self.query = {'jti': jti}

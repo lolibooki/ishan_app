@@ -782,7 +782,7 @@ class SubmitQuiz(Resource):
         user_answers["user"] = user["_id"]
         user_answers["exam"] = quiz["_id"]
         user_answers["course"] = ObjectId(data["course_id"])
-        models.submit_score(user_answers)
+        models.submit_exam(user_answers)
 
         user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]][-1]["score"] = score
 
