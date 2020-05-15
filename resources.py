@@ -296,14 +296,17 @@ class GetUserRecCourses(Resource):
                     current_course['weeks'][week] = None
 
                 try:
-                    if user["reccourse"][str(item)]["exams"].get([current_course['weeks'][week]["quiz"]]) is None:
+                    if current_course['weeks'][week].get("quiz") is None:
                         null_maker = False
                     else:
-                        _last = user["reccourse"][str(item)]["exams"].get([current_course['weeks'][week]["quiz"]])[-1]
-                    if _last.get("passed") is None:
-                        null_maker = True
-                    elif _last["passed"] is False:
-                        null_maker = True
+                        if user["reccourse"][str(item)]["exams"].get([current_course['weeks'][week]["quiz"]]) is None:
+                            null_maker = True
+                        else:
+                            _last = user["reccourse"][str(item)]["exams"][current_course['weeks'][week]["quiz"]][-1]
+                            if _last.get("passed") is None:
+                                null_maker = True
+                            elif _last["passed"] is False:
+                                null_maker = True
                 except:
                     pass
 
