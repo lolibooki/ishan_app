@@ -296,7 +296,9 @@ class GetUserRecCourses(Resource):
                     current_course['weeks'][week] = None
 
                 _last = user["reccourse"][str(item)]["exams"][current_course['weeks'][week]["quiz"]][-1]
-                if _last["passed"] is False or _last.get("passed") is None:
+                if _last.get("passed") is None:
+                    null_maker = True
+                elif _last["passed"] is False:
                     null_maker = True
                 
             current_course['s_time'] = current_course['s_time'].isoformat()
