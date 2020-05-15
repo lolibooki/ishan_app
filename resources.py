@@ -291,6 +291,7 @@ class GetUserRecCourses(Resource):
             null_maker = False  # use for nullify weeks after not passed quiz
             for week in current_course['weeks']:
                 if null_maker is True or int(week) > week_delta:
+                    print(week, null_maker)
                     current_course['weeks'][week] = None
                 try:
                     print("try")
