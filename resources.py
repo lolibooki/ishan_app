@@ -293,7 +293,8 @@ class GetUserRecCourses(Resource):
                 if null_maker is True or int(week) > week_delta:
                     current_course['weeks'][week] = None
                 try:
-                    if user["reccourse"][str(item)]["exams"][current_course['weeks'][week]["quiz"]][-1]["passed"] is False:
+                    _last = user["reccourse"][str(item)]["exams"][current_course['weeks'][week]["quiz"]][-1]
+                    if _last["passed"] is False or _last["end"] == "unfinished":
                         null_maker = True
                 except:
                     pass
