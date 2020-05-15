@@ -764,7 +764,11 @@ class SubmitQuiz(Resource):
 
         quiz = models.get_quiz(data["quiz_id"])
 
-        user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]][-1]["end"] = time
+        if user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]][-1].get("end") is not None:
+            return {'status': 404,
+                    'message': 'first start the quiz'}
+        else:
+            user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]][-1]["end"] = time
 
         if (time - user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]][-1]["start"]).seconds > quiz["time"]:
             user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]][-1]["score"] = 0
