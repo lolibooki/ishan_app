@@ -294,12 +294,11 @@ class GetUserRecCourses(Resource):
             for week in current_course['weeks']:
                 if null_maker is True or int(week) > week_delta:
                     current_course['weeks'][week] = None
-                try:
-                    _last = user["reccourse"][str(item)]["exams"][current_course['weeks'][week]["quiz"]][-1]
-                    if _last["passed"] is False or _last.get("passed") is None:
-                        null_maker = True
-                except:
-                    pass
+
+                _last = user["reccourse"][str(item)]["exams"][current_course['weeks'][week]["quiz"]][-1]
+                if _last["passed"] is False or _last.get("passed") is None:
+                    null_maker = True
+                
             current_course['s_time'] = current_course['s_time'].isoformat()
             courses.append(current_course)
         return courses
