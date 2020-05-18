@@ -805,12 +805,15 @@ class SubmitQuiz(Resource):
             user["reccourse"][data["course_id"]]["exams"][data["quiz_id"]][-1]["passed"] = True
 
             # HARD CODED **********************************************
-            user["reccourse"][data["course_id"]]["status"] = {
-                "lastSeen": {
-                    "week": "2",
-                    "part": "1"
+            if user["mphone"] == "09321":
+                pass
+            else:
+                user["reccourse"][data["course_id"]]["status"] = {
+                    "lastSeen": {
+                        "week": "2",
+                        "part": "1"
+                    }
                 }
-            }
             # HARD CODED **********************************************
 
             models.update_user({"_id": user["_id"]}, {"reccourse": user["reccourse"]})
