@@ -695,10 +695,10 @@ class SetUserStatus(Resource):
         if int(data['week']) < int(last_seen['week']):
             return {'status': 401,
                     'message': 'user is ahead'}
-        else:
+        elif int(data['week']) == int(last_seen['week']):
             if int(data['part']) < int(last_seen['part']):
                 return {'status': 401,
-                        'message': 'user id ahead'}
+                        'message': 'user is ahead'}
 
         user['reccourse'][data['_id']]['status']['lastSeen'] = {'week': data['week'],
                                                                 'part': data['part']}
