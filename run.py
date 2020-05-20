@@ -159,7 +159,7 @@ class Article(form.Form):
 
 
 class ArticleView(ModelView):
-    extra_js = ['//cdn.ckeditor.com/4.6.0/standard/ckeditor.js']
+    extra_js = ['//cdn.ckeditor.com/ckeditor5/19.0.0/classic/ckeditor.js']
     form_overrides = {
         'body': CKTextAreaField
     }
@@ -187,7 +187,7 @@ class Comment(form.Form):
 
 
 class CommentView(ModelView):
-    extra_js = ['//cdn.ckeditor.com/4.6.0/standard/ckeditor.js']
+    extra_js = ['//cdn.ckeditor.com/ckeditor5/19.0.0/classic/ckeditor.js']
     form_overrides = {
         'body': CKTextAreaField
     }
