@@ -219,10 +219,12 @@ class GetRecordedCourses(Resource):
         from pprint import pprint
         logging.info('get recorded courses request. ip: {}'.format(reqparse.request.headers.getlist("X-Real-IP")))
         course_list = models.rec_courses()
+        new_course_list = list()
         for item in course_list:
-            if item.get('field_name', None) is None:
-                pprint(item)
-                course_list.remove(item)
+            if item.get('field_name') == "temp":
+                pass
+            else:
+                new_course_list.append(item)
         return course_list
 
 
