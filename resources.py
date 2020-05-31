@@ -219,7 +219,7 @@ class GetRecordedCourses(Resource):
         logging.info('get recorded courses request. ip: {}'.format(reqparse.request.headers.getlist("X-Real-IP")))
         course_list = models.rec_courses()
         for item in course_list:
-            if item['field_name'] is None:
+            if item.get('field_name', None) is None:
                 del course_list[course_list.index(item)]
         return course_list
 
