@@ -216,11 +216,12 @@ class GetLiveClasses(Resource):
 
 class GetRecordedCourses(Resource):
     def get(self):
+        from pprint import pprint
         logging.info('get recorded courses request. ip: {}'.format(reqparse.request.headers.getlist("X-Real-IP")))
         course_list = models.rec_courses()
         for item in course_list:
             if item.get('field_name', None) is None:
-                print(item)
+                pprint(item)
                 course_list.remove(item)
         return course_list
 
