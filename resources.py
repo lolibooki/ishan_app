@@ -220,6 +220,7 @@ class GetRecordedCourses(Resource):
         course_list = models.rec_courses()
         for item in course_list:
             if item.get('field_name', None) is None:
+                print(item)
                 course_list.remove(item)
         return course_list
 
