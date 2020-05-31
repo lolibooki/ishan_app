@@ -221,8 +221,8 @@ class GetRecordedCourses(Resource):
         course_list = models.rec_courses()
         new_course_list = list()
         for item in course_list:
-            if item.get('field_name') == "temp":
-                pass
+            if item["field_name"] == "temp":
+                continue
             else:
                 new_course_list.append(item)
         return course_list
