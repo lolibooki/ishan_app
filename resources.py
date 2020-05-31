@@ -225,7 +225,7 @@ class GetRecordedCourses(Resource):
                 continue
             else:
                 new_course_list.append(item)
-        return course_list
+        return new_course_list
 
 
 class GetLiveCourses(Resource):
